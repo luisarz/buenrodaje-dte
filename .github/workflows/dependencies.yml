@@ -1,0 +1,24 @@
+name: Install Dependencies
+
+on:
+  push:
+    branches: [ "main" ] # cámbialo si usas otra rama
+
+jobs:
+  install:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Dependencias PHP (Composer)
+      - name: Install PHP dependencies
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress
+
+      # Dependencias Node (npm o pnpm o yarn)
+      - name: Install Node dependencies
+        run: |
+          npm install

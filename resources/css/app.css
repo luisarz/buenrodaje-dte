@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+    .fi-sidebar-nav-groups {
+        row-gap: 1px;
+        flex-direction: column;
+        display: flex !important;
+    }

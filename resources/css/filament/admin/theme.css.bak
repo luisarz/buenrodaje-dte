@@ -1,0 +1,33 @@
+@import '/vendor/filament/filament/resources/css/theme.css';
+@import '/vendor/malzariey/filament-daterangepicker-filter/resources/css/filament-daterangepicker.css';
+
+.fi-ta-table>thead>tr {
+    @apply divide-x divide-gray-200 dark:divide-white/5;
+}
+
+.fi-ta-row {
+    @apply divide-x divide-gray-200 dark:divide-white/5;
+}
+
+.fi-topbar>nav {
+    @apply !bg-inherit ring-0 shadow-none;
+}
+
+.fi-sidebar-header {
+    @apply !bg-inherit ring-0 shadow-none;
+}
+.fi-sidebar-nav-groups{
+    row-gap:0.5rem;
+}
+
+/*.fi-sidebar-item-active > a {*/
+/*    @apply bg-indigo-500;*/
+
+/*    & > svg, span {*/
+/*        @apply text-white;*/
+/*    }*/
+
+/*    &:hover {*/
+/*        @apply bg-indigo-400;*/
+/*    }*/
+/*}*/
