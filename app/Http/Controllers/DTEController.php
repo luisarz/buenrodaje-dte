@@ -179,8 +179,12 @@ class DTEController extends Controller
             $transmissionType = 2;
         }
         $sucursal = $this->warehouse($factura->wherehouse_id);
+        $ivaRent = (bool)$factura->have_retention;
+        $reteRent = (bool)$factura->is_rate;
         $dte = [
             "documentType" => "01",
+            "ivaRent" => $ivaRent,
+            "reteRent" => $reteRent,
             "invoiceId" => intval($factura->document_internal_number),
             "establishmentType" => $establishmentType,
             "conditionCode" => $conditionCode,
@@ -196,8 +200,8 @@ class DTEController extends Controller
             "items" => $items
         ];
 
-        $intentosPermitidos = 100;
-        $intentos = 0;
+//        $intentosPermitidos = 100;
+//        $intentos = 0;
 
 //        while ($intentos < $intentosPermitidos) {
 //            $dte = [
@@ -327,9 +331,13 @@ class DTEController extends Controller
             $transmissionType = 2;
         }
         $sucursal = $this->warehouse($factura->wherehouse_id);
+        $ivaRent = (bool)$factura->have_retention;
+        $reteRent = (bool)$factura->is_rate;
 
         $dte = [
             "documentType" => "03",
+            "ivaRent" => $ivaRent,
+            "reteRent" => $reteRent,
             "invoiceId" => intval($factura->document_internal_number),
             "transmissionType" => $transmissionType,
             "contingency" => $uuidContingencia,

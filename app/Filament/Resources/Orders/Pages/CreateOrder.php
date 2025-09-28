@@ -43,7 +43,6 @@ class CreateOrder extends CreateRecord
                 ->action('create')
                 ->before(function (Action $action, array &$data) {
                     $data['operation_type'] = "Order";
-
                     $data['is_invoiced'] = false;
 
                 })

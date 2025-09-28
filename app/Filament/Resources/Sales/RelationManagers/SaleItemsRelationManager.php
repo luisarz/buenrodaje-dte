@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Sales\RelationManagers;
 
+use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Grid;
@@ -260,7 +261,7 @@ class SaleItemsRelationManager extends RelationManager
                                         Select::make('discount')
                                             ->label('Descuento')
                                             ->prefix('%')
-                                            ->options(array_combine(range(0, 25), array_map(fn ($i) => $i.'%', range(0, 25))))
+                                            ->options(array_combine(range(0, 15), array_map(fn ($i) => $i.'%', range(0, 15))))
                                             ->live(onBlur: true)
                                             ->columnSpan(1)
                                             ->required()
@@ -349,6 +350,9 @@ class SaleItemsRelationManager extends RelationManager
                                                 FileUpload::make('product_image')
                                                     ->label('Imagen del producto')
                                                     ->previewable(true)
+                                                    ->directory('products')
+                                                    ->disk('public')
+                                                    ->visibility('public')
                                                     ->openable()
                                                     ->storeFiles(false)
                                                     ->deletable(false)
@@ -422,6 +426,39 @@ class SaleItemsRelationManager extends RelationManager
                     ->modalWidth('7xl')
                     ->modalHeading('Agregar Producto a venta')
                     ->label('Agregar Producto')
+                    ->before(function (array $data,CreateAction $action) {
+                        $inventory = Inventory::find($data['inventory_id']);
+                        if ($inventory) {
+                            if ($data['quantity'] <=0) {
+                                Notification::make()
+                                    ->title('Error - Agrega producto a la venta')
+                                    ->body('Estas intentando agregar una cantidad inválida, por favor verifique la cantidad a vender')
+                                    ->icon('heroicon-o-exclamation-triangle')
+                                    ->danger()
+                                    ->send();
+                                $action->halt(); // 👈 en Filament 4 esto sí existe en la Action
+
+                            }
+                            if ($data['quantity'] > $inventory->stock) {
+                                   Notification::make()
+                                       ->title('Error - Agrega producto a la venta')
+                                       ->body('Producto sin stock suficiente, por favor verifique la cantidad a vender Stock actual: ' . $inventory->stock)
+                                       ->icon('heroicon-o-exclamation-triangle')
+                                       ->danger()
+                                       ->send();
+                                $action->halt(); // 👈 en Filament 4 esto sí existe en la Action
+
+                            }
+
+                        } else {
+                            Notification::make()
+                                ->title('Erro de venta')
+                                ->body('Inventario no encontrado, por favor seleccione un producto válido')
+                                ->danger()
+                                ->send();
+                            $action->halt(); // 👈 en Filament 4 esto sí existe en la Action
+                        }
+                    })
                     ->after(function (SaleItem $record, Component $livewire) {
                         $this->updateTotalSale($record);
                         $livewire->dispatch('refreshSale');

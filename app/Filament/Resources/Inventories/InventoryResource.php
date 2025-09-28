@@ -190,7 +190,10 @@ class InventoryResource extends Resource
                                         ->defaultImageUrl(url('storage/products/noimage.png'))
                                         ->openUrlInNewTab()
                                         ->height(150)
-                                        ->width(120)
+                                        ->disk('public')
+                                        ->visibility('public')
+                                        ->width(150)
+                                        ->square()
                                         ->extraAttributes([
                                             'class' => 'rounded-md',
                                             'loading' => 'lazy'
@@ -224,7 +227,24 @@ class InventoryResource extends Resource
                                     ->copyable()
                                     ->copyMessage('SKU code copado')
                                     ->copyMessageDuration(1500)
-                                    ->copyableState(fn(Inventory $record): string => "Color: {$record->color}")
+                                    ->icon('heroicon-o-bookmark-square')
+                                    ->searchable()
+                                    ->sortable(),
+                                TextColumn::make('product.codigo')
+                                    ->label('codigo')
+                                    ->tooltip("Código del producto")
+                                    ->copyable()
+                                    ->copyMessage('SKU code copado')
+                                    ->copyMessageDuration(1500)
+//                                    ->copyableState(fn(Inventory $record): string => "Color: {$record->color}")
+                                    ->icon('heroicon-o-qr-code')
+                                    ->searchable()
+                                    ->sortable(),
+                                TextColumn::make('product.bar_code')
+                                    ->label('Codigo de Barra')
+                                    ->tooltip("Código de barra")
+                                    ->copyable()
+                                    ->copyMessageDuration(1500)
                                     ->icon('heroicon-o-qr-code')
                                     ->searchable()
                                     ->sortable(),
@@ -236,10 +256,14 @@ class InventoryResource extends Resource
                                     ->numeric()
                                     ->icon('heroicon-o-circle-stack')
                                     ->getStateUsing(function ($record) {
-//                                        return $record->stock>0?number_format($record->stock,2):'Sin Existencia';
-                                        return $record->stock
-                                            ? number_format($record['stock'], 2, '.')
+
+                                        // Formatear el stock o indicar que no hay
+                                        $formattedStock = $record->stock
+                                            ? number_format($record->stock, 2, '.', '')
                                             : 'Sin Stock';
+
+                                        // Retornar ambos juntos
+                                        return $formattedStock ;
                                     })
                                     ->color(function ($record) {
                                         return $record->stock > 0 ? null : 'danger';
@@ -258,8 +282,8 @@ class InventoryResource extends Resource
                                         return $defaultPrice
                                             ? '$' . number_format($defaultPrice['price'], 2)
                                             : 'Sin precio';
-                                    }),
-//                                    ->sortable(),
+                                    })
+                                    ->sortable(),
                             ])->extraAttributes([
                                 'class' => 'space-y-2'
                             ])
@@ -287,7 +311,7 @@ class InventoryResource extends Resource
                 TrashedFilter::make(),
 
 //
-            ], layout: FiltersLayout::AboveContent)->filtersFormColumns(2)
+            ])->filtersFormColumns(2)
             ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
@@ -336,9 +360,7 @@ class InventoryResource extends Resource
             ])
             ->persistFiltersInSession()
             ->recordUrl(null)
-            ->headerActions([
-
-            ])
+            ->deferLoading()
             ->searchable('product.name', 'product.sku', 'branch.name', 'product.aplications')
             ->toolbarActions([
                 BulkActionGroup::make([

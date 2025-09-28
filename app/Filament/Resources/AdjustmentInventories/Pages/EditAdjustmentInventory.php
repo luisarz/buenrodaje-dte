@@ -54,7 +54,6 @@ class EditAdjustmentInventory extends EditRecord
 
                     $salesItem = adjustmentInventoryItems::where('adjustment_id', $this->record->id)->get();
                     $documnetType = $ajusteProceso->documenttype->name ?? 'S/N';
-//                    $entity = $client->name??'' . ' ' . $client->last_name??'';
                     $entity = $ajusteProceso->entidad;
                     $tipoProceso = $ajusteProceso->tipo;
                     $pais = "Salvadoreña";
@@ -116,7 +115,6 @@ class EditAdjustmentInventory extends EditRecord
                             $stock = $inventory->stock;
                             $precio = $item->precio_unitario;
                             $newStock = $stock + ($isSalida ? -$cantidad : $cantidad);
-
 
                             $inventory->update(['stock' => $newStock]);
 //                            $previewStock = $isSalida ?   $inventory->stock + $item->quantity :  $inventory->stock - $item->quantity;

@@ -221,6 +221,13 @@
       0 => 'MarcelWeidum\\ExpirationNoticePlugin\\ExpirationNoticeServiceProvider',
     ),
   ),
+  'muhammadsadeeq/laravel-activitylog-ui' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'MuhammadSadeeq\\ActivitylogUi\\ActivitylogUiServiceProvider',
+    ),
+  ),
   'nesbot/carbon' => 
   array (
     'providers' => 
@@ -276,6 +283,13 @@
     'aliases' => 
     array (
       'QrCode' => 'SimpleSoftwareIO\\QrCode\\Facades\\QrCode',
+    ),
+  ),
+  'spatie/laravel-activitylog' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\Activitylog\\ActivitylogServiceProvider',
     ),
   ),
   'spatie/laravel-permission' => 

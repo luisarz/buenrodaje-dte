@@ -51,13 +51,13 @@ class CustomerResource extends Resource
                     ->schema([
                         Select::make('person_type_id')
                             ->relationship('persontype', 'name')
-                            ->label('Tipo de persona')
+                            ->label('Tipo de Persona')
                             ->required()
                             ->preload()
                             ->searchable(),
                         Select::make('document_type_id')
                             ->relationship('documenttypecustomer', 'name')
-                            ->label('Tipo de documento')
+                            ->label('Tipo de Documento')
                             ->required()
                             ->preload()
                             ->searchable(),
@@ -88,12 +88,15 @@ class CustomerResource extends Resource
                             ->searchable()
                             ->required(),
                         TextInput::make('nrc')
+                            ->label('NRC')
                             ->maxLength(255)
                             ->default(null),
                         TextInput::make('dui')
+                            ->label('DUI')
                             ->maxLength(255)
                             ->default(null),
                         TextInput::make('nit')
+                            ->label('NIT')
                             ->maxLength(255)
                             ->default(null),
                         Toggle::make('is_taxed')

@@ -107,12 +107,13 @@ class dteActions
 
     public static function historialDTE(): Action
     {
-        return Action::make('Historial')
-            ->label('Bitácora')
-            ->icon('heroicon-o-rectangle-stack')
+        return Action::make('history')
+            ->label('')
+            ->icon('heroicon-o-finger-print')
             ->tooltip('Bitácora de procesos DTE')
             ->modalHeading('Bitácora procesos DTE')
             ->modalWidth('7xl')
+            ->color('secondary')
             ->iconSize(IconSize::Large)
             ->modalContent(fn ($record) => view('DTE.historial-dte', [
                 'record' => $record,
@@ -128,7 +129,7 @@ class dteActions
             ->label('')
             ->icon('heroicon-o-envelope')
             ->iconSize(IconSize::Large)
-            ->tooltip('Enviar DTE')
+            ->tooltip('Enviar e-mail DTE')
             ->visible(fn($record) => $record->is_dte && $record->sale_status != 'Anulado')
             ->color('warning')
             ->requiresConfirmation()

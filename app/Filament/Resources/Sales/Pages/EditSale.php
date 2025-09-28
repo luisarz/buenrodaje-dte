@@ -65,6 +65,37 @@ class EditSale extends EditRecord
                 ->modalSubheading('')
                 ->modalButton('Sí, Finalizar venta')
                 ->schema([
+                    Select::make('document_type_id')
+                        ->label('Comprobante')
+                        ->default(1)
+                        ->options(function (callable $get) {
+                            $openedCashBox = (new GetCashBoxOpenedService())->getOpenCashBox();
+                            if ($openedCashBox['status']) {
+                                return CashBoxCorrelative::with('document_type')
+                                    ->where('cash_box_id', $openedCashBox['id_caja'])
+                                    ->whereIn('document_type_id', [1, 3, 11, 14])
+                                    ->get()
+                                    ->mapWithKeys(function ($item) {
+                                        return [$item->document_type->id => $item->document_type->name];
+                                    })
+                                    ->toArray(); // Asegúrate de devolver un array
+                            }
+
+                            return []; // Retorna un array vacío si no hay una caja abierta
+                        })
+//                                            ->preload()
+//                                            ->reactive() // Permite reaccionar a cambios en el campo
+//                                            ->afterStateUpdated(function ($state, callable $set) {
+//                                                if ($state) {
+//                                                    $lastIssuedDocument = CashBoxCorrelative::where('document_type_id', $state)
+//                                                        ->first();
+//                                                    if ($lastIssuedDocument) {
+//                                                        // Establece el número del último documento emitido en otro campo
+//                                                        $set('document_internal_number', $lastIssuedDocument->current_number + 1);
+//                                                    }
+//                                                }
+//                                            })
+                        ->required(),
                     Select::make('operation_condition_id')
                         ->relationship('salescondition', 'name')
                         ->label('Condición')
@@ -128,10 +159,13 @@ class EditSale extends EditRecord
 
                             return;
                         }
+
+
+
                         $salePayment_status = 'Pagada';
                         $status_sale_credit = 0;
 
-                        $documentType = $record['document_type_id'];
+                        $documentType = $data['document_type_id'];
                         if ($documentType == "") {
                             Notification::make('No se puede finalizar la venta')
                                 ->title('Tipo de documento')

@@ -349,12 +349,17 @@ class CashboxOpenResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->modifyQueryUsing(function ($query) {
-                $branchId = auth()->user()->employee->branch_id;
+                $user = auth()->user();
+                if ($user->hasRole('super_admin')) {
+                    return $query->orderBy('created_at', 'desc');
+                }
 
-                $query->whereHas('cashbox', function ($q) use ($branchId) {
+                $branchId = $user->employee->branch_id;
+                return $query->whereHas('cashbox', function ($q) use ($branchId) {
                     $q->where('branch_id', $branchId);
                 })->orderBy('created_at', 'desc');
             })
+
 
 
             ->filters([

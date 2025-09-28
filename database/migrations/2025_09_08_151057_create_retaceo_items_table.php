@@ -12,7 +12,10 @@ return new class extends Migration {
     {
         Schema::create('retaceo_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('retaceo_id')->constrained('retaceo');
+            $table->foreignId('retaceo_id')
+                ->constrained(table: 'retaceo', column: 'id')
+                ->cascadeOnDelete();
+
             $table->foreignId('purchase_id')->constrained('purchases');
             $table->foreignId('purchase_item_id')->constrained('purchase_items');
             $table->foreignId('inventory_id')->constrained('inventories');

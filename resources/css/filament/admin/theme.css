@@ -233,3 +233,7 @@
 .fi-sidebar-group.fi-active .fi-sidebar-group-btn:hover .fi-icon {
     @apply text-primary-600 dark:text-primary-400;
 }
+
+label.fi-fo-field-label>span.fi-fo-field-label-content {
+    @apply text-xs;
+}

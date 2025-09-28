@@ -148,9 +148,10 @@ class BranchResource extends Resource
                         FileUpload::make('logo')
                             ->directory('wherehouses')
                             ->disk('public')
+                            ->visibility('public')
+
                             ->image()
                             ->imagePreviewHeight(100)
-                            ->visibility('public')
                             ->columnSpanFull(),
                         Toggle::make('is_active')
                             ->inlineLabel()
@@ -164,6 +165,11 @@ class BranchResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label('Id')
+                    ->sortable()
+                    ->badge()
+                    ->searchable(),
                 TextColumn::make('stablishmenttype.name')
                     ->label('Tipo')
                     ->sortable()

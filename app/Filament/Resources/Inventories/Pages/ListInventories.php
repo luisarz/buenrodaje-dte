@@ -18,7 +18,6 @@ use pxlrbt\FilamentExcel\Columns\Column;
 //use pxlrbt\FilamentExcel\Actions\Pages\ExportAction;
 class ListInventories extends ListRecords
 {
-    use HasToggleableTable;
     protected static string $resource = InventoryResource::class;
 protected static ?string $navigationLabel = "Inventarios";
     protected function getHeaderActions(): array

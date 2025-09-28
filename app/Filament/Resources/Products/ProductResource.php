@@ -151,8 +151,10 @@ class ProductResource extends Resource
                             ])->columns(4),
 
                         FileUpload::make('images')
-                            ->directory('products')
                             ->image()
+                            ->directory('products')
+                            ->disk('public')
+                            ->visibility('public')
                             ->openable()
                             ->columnSpanFull(),
 
@@ -176,6 +178,8 @@ class ProductResource extends Resource
                     ->placeholder('Sin imagen')
                     ->defaultImageUrl(url('storage/products/noimage.png'))
                     ->openUrlInNewTab()
+                    ->disk('public')
+                    ->visibility('public')
                     ->square(),
 
 

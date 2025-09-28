@@ -99,8 +99,9 @@ function updateTotalSale(mixed $idItem, array $data): void
         // Round and save calculated values
         $sale->net_amount = round($neto, 2);
         $sale->taxe = round($iva, 2);
-        $sale->retention = round($retention, 2);
         $sale->is_rate= $applyRate;
+        $sale->have_retention= $applyRetention;
+        $sale->retention = round($retention, 2);
         $sale->rate_amount = round($renta, 2);
         $sale->sale_total = round($montoTotal - $retention-$renta, 2);
         $sale->cash = $cash ?? 0;
@@ -152,38 +153,38 @@ class SaleResource extends Resource
                                             ->preload()
                                             ->disabled()
                                             ->default(fn() => optional(Auth::user()->employee)->branch_id), // Null-safe check
-                                        Select::make('document_type_id')
-                                            ->label('Comprobante')
-//                                            ->relationship('documenttype', 'name')
-                                            ->default(1)
-                                            ->options(function (callable $get) {
-                                                $openedCashBox = (new GetCashBoxOpenedService())->getOpenCashBox();
-                                                if ($openedCashBox['status']) {
-                                                    return CashBoxCorrelative::with('document_type')
-                                                        ->where('cash_box_id', $openedCashBox['id_caja'])
-                                                        ->whereIn('document_type_id', [1, 3, 11, 14])
-                                                        ->get()
-                                                        ->mapWithKeys(function ($item) {
-                                                            return [$item->document_type->id => $item->document_type->name];
-                                                        })
-                                                        ->toArray(); // Asegúrate de devolver un array
-                                                }
-
-                                                return []; // Retorna un array vacío si no hay una caja abierta
-                                            })
-//                                            ->preload()
-//                                            ->reactive() // Permite reaccionar a cambios en el campo
-//                                            ->afterStateUpdated(function ($state, callable $set) {
-//                                                if ($state) {
-//                                                    $lastIssuedDocument = CashBoxCorrelative::where('document_type_id', $state)
-//                                                        ->first();
-//                                                    if ($lastIssuedDocument) {
-//                                                        // Establece el número del último documento emitido en otro campo
-//                                                        $set('document_internal_number', $lastIssuedDocument->current_number + 1);
-//                                                    }
+//                                        Select::make('document_type_id')
+//                                            ->label('Comprobante')
+////                                            ->relationship('documenttype', 'name')
+//                                            ->default(1)
+//                                            ->options(function (callable $get) {
+//                                                $openedCashBox = (new GetCashBoxOpenedService())->getOpenCashBox();
+//                                                if ($openedCashBox['status']) {
+//                                                    return CashBoxCorrelative::with('document_type')
+//                                                        ->where('cash_box_id', $openedCashBox['id_caja'])
+//                                                        ->whereIn('document_type_id', [1, 3, 11, 14])
+//                                                        ->get()
+//                                                        ->mapWithKeys(function ($item) {
+//                                                            return [$item->document_type->id => $item->document_type->name];
+//                                                        })
+//                                                        ->toArray(); // Asegúrate de devolver un array
 //                                                }
+//
+//                                                return []; // Retorna un array vacío si no hay una caja abierta
 //                                            })
-                                            ->required(),
+////                                            ->preload()
+////                                            ->reactive() // Permite reaccionar a cambios en el campo
+////                                            ->afterStateUpdated(function ($state, callable $set) {
+////                                                if ($state) {
+////                                                    $lastIssuedDocument = CashBoxCorrelative::where('document_type_id', $state)
+////                                                        ->first();
+////                                                    if ($lastIssuedDocument) {
+////                                                        // Establece el número del último documento emitido en otro campo
+////                                                        $set('document_internal_number', $lastIssuedDocument->current_number + 1);
+////                                                    }
+////                                                }
+////                                            })
+//                                            ->required(),
 //                                        Forms\Components\TextInput::make('document_internal_number')
 //                                            ->label('#   Comprobante')
 //                                            ->required()
@@ -333,7 +334,6 @@ class SaleResource extends Resource
                                                     ->mapWithKeys(function ($sale) {
                                                         // Formato para mostrar el resultado en el select
                                                         $displayText = "Orden # : {$sale->order_number}  - Tipo: {$sale->operation_type}";
-
                                                         // Incluir el nombre del cliente si es necesario
                                                         if ($sale->customer) {
                                                             $displayText .= " - Cliente: {$sale->customer->name}";
@@ -466,12 +466,12 @@ class SaleResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
-                TextColumn::make('wherehouse.name')
-                    ->label('Sucursal')
-                    ->numeric()
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->sortable(),
+//                TextColumn::make('wherehouse.name')
+//                    ->label('Sucursal')
+//                    ->numeric()
+//                    ->searchable()
+//                    ->toggleable(isToggledHiddenByDefault: true)
+//                    ->sortable(),
 
                 TextColumn::make('operation_date')
                     ->label('Fecha')
@@ -482,13 +482,18 @@ class SaleResource extends Resource
                 TextColumn::make('documenttype.name')
                     ->label('Tipo')
                     ->sortable(),
+                TextColumn::make('wherehouse.name')
+                    ->label('Sucursal')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
                 TextColumn::make('document_internal_number')
                     ->label('#')
                     ->formatStateUsing(fn($state) => number_format($state, '0', '')) // Formatea el número
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('generationCode')
-                    ->label('Cod.Generaición')
+                    ->label('Cod.Generación')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable()
                     ->searchable(),
@@ -554,7 +559,7 @@ class SaleResource extends Resource
                     ->color(fn($record) => $record->is_dte ? 'success' : 'danger') // color según is_dte
                     ->icon(fn($record) => $record->is_dte ? 'heroicon-o-check-circle' : 'heroicon-o-arrow-path')
                     ->label('Cliente')
-                    ->wrap(50)
+                    ->wrap(true)
                     ->searchable(query: function ($query, $search) {
                         $query->orWhereHas('customer', function ($q) use ($search) {
                             $q->where('name', 'like', "%{$search}%")
@@ -599,6 +604,8 @@ class SaleResource extends Resource
                                 ]);
                             })
                     )
+                    ->formatStateUsing(fn($state) => \Illuminate\Support\Str::limit($state, 35))
+
                     ->sortable(),
                 TextColumn::make('salescondition.name')
                     ->label('Condición')
@@ -656,6 +663,12 @@ class SaleResource extends Resource
                     ->sortable(),
             ])
             ->reorderableColumns()
+            ->recordClasses(fn (Sale $record) => match ($record->sale_status) {
+                'Anulado' => 'bg-red-50 border-l-4 border-red-400',
+//                'Nueva' => 'opacity-50 border-l-4 border-gray-400',
+//                'Facturada' => 'bg-green-50 border-l-4 border-green-400',
+                default => null,
+            })
             ->deferColumnManager(false)
             ->modifyQueryUsing(function ($query) {
                 $query
