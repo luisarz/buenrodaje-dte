@@ -123,7 +123,7 @@ class Sale extends Model
 
     public function dteSend(): HasOne
     {
-        return $this->hasOne(HistoryDte::class, 'generationCode', 'codigoGeneracion');
+        return $this->hasOne(HistoryDte::class, 'codigoGeneracion', 'codigoGeneracion');
     }
 
 

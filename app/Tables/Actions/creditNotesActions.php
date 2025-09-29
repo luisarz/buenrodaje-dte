@@ -93,16 +93,19 @@ class creditNotesActions
                     $dteController = new DTEController();
                     $resultado = $dteController->anularDTE($record->id);
                     if ($resultado['estado'] === 'EXITO') {
-                        PageAlert::make()
+                        Notification::make()
                             ->title('Anulación Exitosa')
+                            ->body('El DTE ha sido anulado correctamente.')
                             ->success()
                             ->send();
+
                     } else {
-                        PageAlert   ::make()
+                        Notification::make()
                             ->title('Fallo en anulación')
-                            ->danger()
                             ->body($resultado["mensaje"])
+                            ->danger()
                             ->send();
+
                     }
                 }
             });

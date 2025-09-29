@@ -200,41 +200,6 @@ class DTEController extends Controller
             "items" => $items
         ];
 
-//        $intentosPermitidos = 100;
-//        $intentos = 0;
-
-//        while ($intentos < $intentosPermitidos) {
-//            $dte = [
-//                "documentType" => "01",
-//                "invoiceId" => $intentos,
-//                "establishmentType" => $establishmentType,
-//                "conditionCode" => $conditionCode,
-//                "transmissionType" => $transmissionType,
-//                "contingency" => $uuidContingencia,
-//                "codeEstablishmentType" => trim($sucursal->establishment_type_code) ?? null,
-//                "codePosTerminal" => trim($sucursal->pos_terminal_code) ?? null,
-//                "economicAtivity" => trim($sucursal->economicactivity->code) ?? null,
-//                "emisorPhone" => trim($sucursal->phone) ?? null,
-//                "emisorAddress" => trim($sucursal->address) ?? null,
-//                "receptor" => $receptor,
-//                "extencion" => $extencion,
-//                "items" => $items
-//            ];
-//
-//            try {
-//                $resultado = $this->processDTE($dte, $idVenta);
-//
-//                if ($resultado['success'] ?? false) {
-//                    break;
-//                } else {
-//                    \Log::warning("Intento {$intentos}: Error al procesar DTE - " . ($resultado['message'] ?? 'Sin mensaje'));
-//                }
-//            } catch (\Exception $e) {
-//                \Log::error("Intento {$intentos}: Excepción procesando DTE - " . $e->getMessage());
-//            }
-//            $intentos++;
-//            sleep(12); // Espera antes de reintentar
-//        }
 
 
 //        $dteJSON = json_encode($dte, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -352,7 +317,44 @@ class DTEController extends Controller
             "extencion" => $extencion,
             "items" => $items
         ];
-
+//        $intentosPermitidos = 250;
+//        $intentos = 150;
+//
+//        while ($intentos < $intentosPermitidos) {
+//
+//            $dte = [
+//                "documentType" => "03",
+//                "ivaRent" => $ivaRent,
+//                "reteRent" => $reteRent,
+//                "invoiceId" => $intentos,//intval($factura->document_internal_number),
+//                "transmissionType" => $transmissionType,
+//                "contingency" => $uuidContingencia,
+//                "establishmentType" => trim($establishmentType),
+//                "codeEstablishmentType" => trim($sucursal->establishment_type_code) ?? null,
+//                "codePosTerminal" => trim($sucursal->pos_terminal_code) ?? null,
+//                "economicAtivity" => trim($sucursal->economicactivity->code) ?? null,
+//                "emisorPhone" => trim($sucursal->phone) ?? null,
+//                "emisorAddress" => trim($sucursal->address) ?? null,
+//                "conditionCode" => trim($conditionCode),
+//                "receptor" => $receptor,
+//                "extencion" => $extencion,
+//                "items" => $items
+//            ];
+//
+//            try {
+//                $resultado = $this->processDTE($dte, $idVenta);
+//
+//                if ($resultado['success'] ?? false) {
+//                    break;
+//                } else {
+//                    \Log::warning("Intento {$intentos}: Error al procesar DTE - " . ($resultado['message'] ?? 'Sin mensaje'));
+//                }
+//            } catch (\Exception $e) {
+//                \Log::error("Intento {$intentos}: Excepción procesando DTE - " . $e->getMessage());
+//            }
+//            $intentos++;
+//            sleep(12); // Espera antes de reintentar
+//        }
 //        return response()->json($dte);
 
 
@@ -361,7 +363,7 @@ class DTEController extends Controller
 
     function CreditNotesJSON($idVenta): array|JsonResponse
     {
-        $factura = Sale::with('saleRelated', 'wherehouse.stablishmenttype', 'documenttype', 'seller', 'customer', 'customer.economicactivity', 'customer.departamento', 'customer.documenttypecustomer', 'salescondition', 'paymentmethod', 'saleDetails', 'saleDetails.inventory.product')->find($idVenta);
+        $factura = Sale::with('dteProcesado','saleRelated', 'wherehouse.stablishmenttype', 'documenttype', 'seller', 'customer', 'customer.economicactivity', 'customer.departamento', 'customer.documenttypecustomer', 'salescondition', 'paymentmethod', 'saleDetails', 'saleDetails.inventory.product')->find($idVenta);
         if ($factura->document_internal_number == 0 || $factura->document_internal_number == null) {
             $document_internal_number_new = 0;
             $document_type_id = $factura->document_type_id;
@@ -452,8 +454,8 @@ class DTEController extends Controller
         $relatedDocuments[] = [
             "typeDocument" => "03",//CCF
             "typeGeneration" => "1",//$factura->saleRelated->document_internal_number,
-//            "numDocument" => $factura->saleRelated->document_internal_number,
-            "numDocument" => $factura->dteSend->num_control,
+            "numDocument" => $factura->saleRelated->document_internal_number,
+//            "numDocument" => $factura->dteSend->num_control,
             "dateEmision" => $factura->saleRelated->operation_date,
         ];
         $sucursal = $this->warehouse($factura->wherehouse_id);
@@ -477,44 +479,44 @@ class DTEController extends Controller
         ];
 
 //        $dteJSON = json_encode($dte, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        return response()->json($dte);
+//        return response()->json($dte);
 
-//        $intentosPermitidos = 51;
-//        $intentos = 1;
-//
-//        while ($intentos < $intentosPermitidos) {
-//            $dte = [
-//                "documentType" => "05",
-//                "invoiceId" => $intentos,//intval($factura->document_internal_number),
-//                "establishmentType" => "02",//$establishmentType,
-//                "conditionCode" => $conditionCode,
-//                "transmissionType" => $transmissionType,
-//                "contingency" => $uuidContingencia,
-//                "relatedDocuments" => $relatedDocuments,
-//                "codeEstablishmentType" => trim($sucursal->establishment_type_code) ?? null,
-//                "codePosTerminal" => trim($sucursal->pos_terminal_code) ?? null,
-//                "economicAtivity" => trim($sucursal->economicactivity->code) ?? null,
-//                "emisorPhone" => trim($sucursal->phone) ?? null,
-//                "emisorAddress" => trim($sucursal->address) ?? null,
-//                "receptor" => $receptor,
-//                "extencion" => $extencion,
-//                "items" => $items
-//            ];
-//
-//            try {
-//                $resultado = $this->processDTE($dte, $idVenta);
-//
-//                if ($resultado['success'] ?? false) {
-//                    break;
-//                } else {
-//                    \Log::warning("Intento {$intentos}: Error al procesar DTE - " . ($resultado['message'] ?? 'Sin mensaje'));
-//                }
-//            } catch (\Exception $e) {
-//                \Log::error("Intento {$intentos}: Excepción procesando DTE - " . $e->getMessage());
-//            }
-//            $intentos++;
-//            sleep(12); // Espera antes de reintentar
-//        }
+        $intentosPermitidos = 100;
+        $intentos = 5;
+
+        while ($intentos < $intentosPermitidos) {
+            $dte = [
+                "documentType" => "05",
+                "invoiceId" => $intentos,//intval($factura->document_internal_number),
+                "establishmentType" => "02",//$establishmentType,
+                "conditionCode" => $conditionCode,
+                "transmissionType" => $transmissionType,
+                "contingency" => $uuidContingencia,
+                "relatedDocuments" => $relatedDocuments,
+                "codeEstablishmentType" => trim($sucursal->establishment_type_code) ?? null,
+                "codePosTerminal" => trim($sucursal->pos_terminal_code) ?? null,
+                "economicAtivity" => trim($sucursal->economicactivity->code) ?? null,
+                "emisorPhone" => trim($sucursal->phone) ?? null,
+                "emisorAddress" => trim($sucursal->address) ?? null,
+                "receptor" => $receptor,
+                "extencion" => $extencion,
+                "items" => $items
+            ];
+
+            try {
+                $resultado = $this->processDTE($dte, $idVenta);
+
+                if ($resultado['success'] ?? false) {
+                    break;
+                } else {
+                    \Log::warning("Intento {$intentos}: Error al procesar DTE - " . ($resultado['message'] ?? 'Sin mensaje'));
+                }
+            } catch (\Exception $e) {
+                \Log::error("Intento {$intentos}: Excepción procesando DTE - " . $e->getMessage());
+            }
+            $intentos++;
+            sleep(12); // Espera antes de reintentar
+        }
 
         return $this->processDTE($dte, $idVenta);
     }
@@ -638,42 +640,42 @@ class DTEController extends Controller
 //        return response()->json($dte);
 
 
-//        $intentosPermitidos = 26;
-//        $intentos = 1;
-//
-//        while ($intentos < $intentosPermitidos) {
-//            $dte = [
-//                "documentType" => "06",
-//                "invoiceId" => $intentos,//intval($factura->document_internal_number),
-//                "establishmentType" => "02",//$establishmentType,
-//                "conditionCode" => $conditionCode,
-//                "transmissionType" => $transmissionType,
-//                "contingency" => $uuidContingencia,
-//                "relatedDocuments" => $relatedDocuments,
-//                "codeEstablishmentType" => trim($sucursal->establishment_type_code) ?? null,
-//                "codePosTerminal" => trim($sucursal->pos_terminal_code) ?? null,
-//                "economicAtivity" => trim($sucursal->economicactivity->code) ?? null,
-//                "emisorPhone" => trim($sucursal->phone) ?? null,
-//                "emisorAddress" => trim($sucursal->address) ?? null,
-//                "receptor" => $receptor,
-//                "extencion" => $extencion,
-//                "items" => $items
-//            ];
-//
-//            try {
-//                $resultado = $this->processDTE($dte, $idVenta);
-//
-//                if ($resultado['success'] ?? false) {
-//                    break;
-//                } else {
-//                    \Log::warning("Intento {$intentos}: Error al procesar DTE - " . ($resultado['message'] ?? 'Sin mensaje'));
-//                }
-//            } catch (\Exception $e) {
-//                \Log::error("Intento {$intentos}: Excepción procesando DTE - " . $e->getMessage());
-//            }
-//            $intentos++;
-//            sleep(12); // Espera antes de reintentar
-//        }
+        $intentosPermitidos = 40;
+        $intentos = 2;
+
+        while ($intentos < $intentosPermitidos) {
+            $dte = [
+                "documentType" => "06",
+                "invoiceId" => $intentos,//intval($factura->document_internal_number),
+                "establishmentType" => "02",//$establishmentType,
+                "conditionCode" => $conditionCode,
+                "transmissionType" => $transmissionType,
+                "contingency" => $uuidContingencia,
+                "relatedDocuments" => $relatedDocuments,
+                "codeEstablishmentType" => trim($sucursal->establishment_type_code) ?? null,
+                "codePosTerminal" => trim($sucursal->pos_terminal_code) ?? null,
+                "economicAtivity" => trim($sucursal->economicactivity->code) ?? null,
+                "emisorPhone" => trim($sucursal->phone) ?? null,
+                "emisorAddress" => trim($sucursal->address) ?? null,
+                "receptor" => $receptor,
+                "extencion" => $extencion,
+                "items" => $items
+            ];
+
+            try {
+                $resultado = $this->processDTE($dte, $idVenta);
+
+                if ($resultado['success'] ?? false) {
+                    break;
+                } else {
+                    \Log::warning("Intento {$intentos}: Error al procesar DTE - " . ($resultado['message'] ?? 'Sin mensaje'));
+                }
+            } catch (\Exception $e) {
+                \Log::error("Intento {$intentos}: Excepción procesando DTE - " . $e->getMessage());
+            }
+            $intentos++;
+            sleep(12); // Espera antes de reintentar
+        }
 
         return $this->processDTE($dte, $idVenta);
     }
@@ -793,38 +795,7 @@ class DTEController extends Controller
             "items" => $items,
             "assetTitle" => $receptor['name'] ?? 'SN'
         ];
-//        $intentosPermitidos = 10000;
-//        $intentos = 9950;
-//
-//        while ($intentos < $intentosPermitidos) {
-//            $dte = [
-//                "documentType" => "04",
-//                "invoiceId" =>$intentos,
-//                "establishmentType" => "02",//$establishmentType,
-//                "conditionCode" => $conditionCode,
-//                "transmissionType" => $transmissionType,
-//                "contingency" => $uuidContingencia,
-//                "relatedDocuments" => $relatedDocuments,
-//                "receptor" => $receptor,
-//                "extencion" => $extencion,
-//                "items" => $items,
-//                "assetTitle" => $receptor['name'] ?? 'SN'
-//            ];
-//
-//            try {
-//                $resultado = $this->processDTE($dte, $idVenta);
-//
-//                if ($resultado['success'] ?? false) {
-//                    break;
-//                } else {
-//                    \Log::warning("Intento {$intentos}: Error al procesar DTE - " . ($resultado['message'] ?? 'Sin mensaje'));
-//                }
-//            } catch (\Exception $e) {
-//                \Log::error("Intento {$intentos}: Excepción procesando DTE - " . $e->getMessage());
-//            }
-//            $intentos++;
-//            sleep(12); // Espera antes de reintentar
-//        }
+
 
 //        $dteJSON = json_encode($dte, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 //        return response()->json($dte);
@@ -964,8 +935,8 @@ class DTEController extends Controller
 //        $dteJSON = json_encode($dte, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 //        return response()->json($dte);
 
-        $intentosPermitidos = 150;
-        $intentos = 100;
+        $intentosPermitidos = 200;
+        $intentos = 120;
 
         while ($intentos < $intentosPermitidos) {
             $dte = [
@@ -1121,8 +1092,8 @@ class DTEController extends Controller
 
 //        $dteJSON = json_encode($dte, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 //return response()->json($dte);
-//        $intentosPermitidos = 26;
-//        $intentos = 1;
+//        $intentosPermitidos = 46;
+//        $intentos = 10;
 //
 //        while ($intentos < $intentosPermitidos) {
 //            $dte = [
