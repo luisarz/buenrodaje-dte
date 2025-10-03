@@ -50,6 +50,13 @@
       0 => 'BladeUI\\Icons\\BladeIconsServiceProvider',
     ),
   ),
+  'codeat3/blade-phosphor-icons' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Codeat3\\BladePhosphorIcons\\BladePhosphorIconsServiceProvider',
+    ),
+  ),
   'codewithdennis/filament-simple-alert' => 
   array (
     'aliases' => 
@@ -297,6 +304,13 @@
     'providers' => 
     array (
       0 => 'Spatie\\Permission\\PermissionServiceProvider',
+    ),
+  ),
+  'tonegabes/filament-phosphor-icons' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'ToneGabes\\Filament\\Icons\\PhosphorIconsServiceProvider',
     ),
   ),
 );

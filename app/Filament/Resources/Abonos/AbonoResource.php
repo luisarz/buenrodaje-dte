@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\Abonos;
 
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Actions\Action;
@@ -33,8 +35,8 @@ class AbonoResource extends Resource
 {
     protected static ?string $model = Abono::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-building-office';
-    protected static string | \UnitEnum | null $navigationGroup = 'Contabilidad';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-office';
+    protected static string|\UnitEnum|null $navigationGroup = 'Contabilidad';
     protected static ?string $navigationLabel = 'Cuentas por pagar';
     protected static ?string $pluralLabel = 'Cuentas por pagar';
 
@@ -108,6 +110,11 @@ class AbonoResource extends Resource
                 ->schema([
                     Repeater::make('purchases')
                         ->addActionLabel('Agregar  a la lista de compras')
+                        ->table([
+                            TableColumn::make('purchase_id'),
+                            TableColumn::make('monto_pagado')
+                        ])
+                        ->compact()
                         ->schema([
                             Select::make('purchase_id')
                                 ->label('Detalle de compra')
@@ -147,7 +154,8 @@ class AbonoResource extends Resource
                         ->columns(2)
                         ->columnSpanFull()
                         ->label(''),
-                ]),
+                ])
+            ,
 
         ]);
     }

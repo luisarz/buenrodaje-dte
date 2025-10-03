@@ -8,6 +8,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -107,6 +108,7 @@ class PaymentsResource extends Resource
                 ->icon('heroicon-o-building-office')
                 ->schema([
                     Repeater::make('sales')
+                        ->compact()
                         ->addActionLabel('Agregar  a la lista de compras')
                         ->schema([
                             Select::make('sale_id')
@@ -143,6 +145,7 @@ class PaymentsResource extends Resource
                                 ->inlineLabel(false)
                                 ->label('Monto a pagar'),
                         ])
+
                         ->columns(2)
                         ->columnSpanFull()
                         ->label(''),

@@ -49,6 +49,7 @@ use Filament\Notifications\Actions\Action;
 use Filament\Tables\Actions;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Model;
+use ToneGabes\Filament\Icons\Enums\Phosphor;
 
 class InventoryResource extends Resource
 {
@@ -206,6 +207,7 @@ class InventoryResource extends Resource
                                     ->weight(FontWeight::Medium)
                                     ->sortable()
                                     ->icon('heroicon-o-cube')
+                                    ->icon(Phosphor::AddressBookBold->bold())
                                     ->searchable()
                                     ->sortable(),
                                 TextColumn::make('product.presentacion')
@@ -245,7 +247,8 @@ class InventoryResource extends Resource
                                     ->tooltip("Código de barra")
                                     ->copyable()
                                     ->copyMessageDuration(1500)
-                                    ->icon('heroicon-o-qr-code')
+                                    ->icon(Phosphor::BarcodeBold->bold())
+//                                    ->icon('heroicon-o-qr-code')
                                     ->searchable()
                                     ->sortable(),
                                 TextColumn::make('branch.name')

@@ -65,7 +65,9 @@ class AdminPanelProvider extends PanelProvider
             ->authGuard('web')
             ->sidebarCollapsibleOnDesktop()
 //            ->sidebarAccordion()
-            ->databaseNotifications()
+            ->topbar(false)
+
+        ->databaseNotifications()
             ->login(CustomLogin::class)
             ->maxContentWidth('full')
             ->collapsibleNavigationGroups()

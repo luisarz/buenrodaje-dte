@@ -201,7 +201,6 @@ class DTEController extends Controller
         ];
 
 
-
 //        $dteJSON = json_encode($dte, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 //        return response()->json($dte);
 
@@ -363,7 +362,7 @@ class DTEController extends Controller
 
     function CreditNotesJSON($idVenta): array|JsonResponse
     {
-        $factura = Sale::with('dteProcesado','saleRelated', 'wherehouse.stablishmenttype', 'documenttype', 'seller', 'customer', 'customer.economicactivity', 'customer.departamento', 'customer.documenttypecustomer', 'salescondition', 'paymentmethod', 'saleDetails', 'saleDetails.inventory.product')->find($idVenta);
+        $factura = Sale::with('dteProcesado', 'saleRelated', 'wherehouse.stablishmenttype', 'documenttype', 'seller', 'customer', 'customer.economicactivity', 'customer.departamento', 'customer.documenttypecustomer', 'salescondition', 'paymentmethod', 'saleDetails', 'saleDetails.inventory.product')->find($idVenta);
         if ($factura->document_internal_number == 0 || $factura->document_internal_number == null) {
             $document_internal_number_new = 0;
             $document_type_id = $factura->document_type_id;
@@ -1288,21 +1287,26 @@ class DTEController extends Controller
             ];
         }
 
-        $codigoGeneracion = $venta->dteProcesado->codigoGeneracion;
+        $codigoGeneracion = $venta->generationCode;
         $establishmentType = trim($venta->wherehouse->stablishmenttype->code);
         $user = Auth::user()->employee;
+
+
+        $sucursal = $this->warehouse($venta->wherehouse_id);
         $dte = [
             "codeGeneration" => $codigoGeneracion,
             "codeGenerationR" => null,
             "description" => "Anulación de la operación",
             "establishmentType" => $establishmentType,
+            "codeEstablishmentMH" => trim($sucursal->establishment_type_code) ?? null,
+            "posTerminalMH" => trim($sucursal->pos_terminal_code) ?? null,
             "type" => 2,
             "responsibleName" => $venta->seller->name . " " . $venta->seller->lastname,
             "responsibleDocType" => "13",
             "responsibleDocNumber" => trim(str_replace("-", "", $venta->seller->dui)),
             "requesterName" => $user->name . " " . $user->lastname,
             "requesterDocType" => "13",
-            "requesterDocNumber" => trim(str_replace("-", "", $user->dui)),
+            "requesterDocNumber" => trim(str_replace("-", "", $user->dui??null)),
 
         ];
 
@@ -1416,6 +1420,9 @@ class DTEController extends Controller
     function SendAnularDTE($dteData, $idVenta) // Assuming $dteData is the data you need to send
     {
         try {
+
+
+
             $urlAPI = env('DTE_URL') . '/api/DTE/cancellationDTE'; // Set the correct API URL
             $apiKey = $this->getConfiguracion()->api_key; // Assuming you retrieve the API key from your config
             // Convert data to JSON format
@@ -1450,7 +1457,7 @@ class DTEController extends Controller
             curl_close($curl);
 
             $responseData = json_decode($response, true);
-//            dd  ($responseData);
+//            return response()->json($responseData);
             $responseData['response_anular'] = json_decode($responseData['descripcion'], true) ?? [];
 //            dd($responseData);
             $response_anular = $responseData['response_anular'] ?? [];
@@ -1717,8 +1724,8 @@ class DTEController extends Controller
         $venta->is_dte = true;
         $venta->is_hacienda_send = $enviado_hacienda;
         $venta->generationCode = $codGeneration ?? null;
-        $venta->num_control= $responseData['identificacion']['numeroControl'] ?? null;
-        $venta->receiptStamp= $responseData['respuestaHacienda']['selloRecibido'] ?? null;
+        $venta->num_control = $responseData['identificacion']['numeroControl'] ?? null;
+        $venta->receiptStamp = $responseData['respuestaHacienda']['selloRecibido'] ?? null;
         $venta->jsonUrl = $fileName;
         $venta->save();
     }
