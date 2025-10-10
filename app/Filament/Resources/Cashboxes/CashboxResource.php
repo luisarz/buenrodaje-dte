@@ -37,25 +37,25 @@ class CashboxResource extends Resource
         return $schema
             ->components([
                 Section::make('')
-                ->schema([
-                    Select::make('branch_id')
-                        ->relationship('branch', 'name')
-                        ->label('Sucursal')
-                        ->searchable()
-                        ->preload()
-                        ->required(),
+                    ->schema([
+                        Select::make('branch_id')
+                            ->relationship('branch', 'name')
+                            ->label('Sucursal')
+                            ->searchable()
+                            ->preload()
+                            ->required(),
 
-                    TextInput::make('description')
-                        ->label('Descripción')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('balance')
-                        ->required()
-                        ->numeric(),
-                    Toggle::make('is_active')
-                        ->label('Activa')
-                        ->default(true),
-                ])->columns(2),
+                        TextInput::make('description')
+                            ->label('Descripción')
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('balance')
+                            ->required()
+                            ->numeric(),
+                        Toggle::make('is_active')
+                            ->label('Activa')
+                            ->default(true),
+                    ])->columns(2),
             ]);
     }
 
@@ -70,7 +70,7 @@ class CashboxResource extends Resource
                     ->label('Descripción')
                     ->searchable(),
                 TextColumn::make('balance')
-                   ->money('USD', locale: 'en_US')
+                    ->money('USD', locale: 'en_US')
                     ->label('Saldo')
                     ->badge(fn ($record) => $record->balance < 100 ? 'danger' : 'success')
                     ->sortable(),
@@ -96,9 +96,9 @@ class CashboxResource extends Resource
             ])
             ->recordActions([
                 EditAction::make()
-                ->visible(function ($record) {
-                    return !$record->is_open;
-                }),
+                    ->visible(function ($record) {
+                        return !$record->is_open;
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
