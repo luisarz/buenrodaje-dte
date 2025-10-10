@@ -135,12 +135,11 @@ class ProviderResource extends Resource
                             ->relationship('pais', 'name')
                             ->label('País')
                             ->preload()
-                            ->live()
-                            ->searchable(),
+                            ->live(),
+//                            ->searchable(),
                         Select::make('department_id')
                             ->relationship('departamento', 'name')
                             ->label('Departamento')
-                            ->searchable()
                             ->live()
                             ->afterStateUpdated(function ($state, $set) {
                                 if ($state) {
@@ -167,7 +166,7 @@ class ProviderResource extends Resource
                         Select::make('distrito_id')
                             ->label('Distrito')
                             ->preload()
-                            ->searchable()
+//                            ->searchable()
                             ->options(function (callable $get) {
                                 $idMunicipality = $get('municipility_id');
                                 if (!$idMunicipality) {

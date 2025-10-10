@@ -7,7 +7,7 @@
 
 
 .fi-sidebar-nav-groups {
-   row-gap: 7px !important;
+    row-gap: 7px !important;
 }
 @theme inline {
     --color-gray-50: var(--color-slate-50);
