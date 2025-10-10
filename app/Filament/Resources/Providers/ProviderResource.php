@@ -133,14 +133,8 @@ class ProviderResource extends Resource
                     ->schema([
                         Select::make('country_id')
                             ->relationship('pais', 'name')
-                            ->default(1)
                             ->label('País')
                             ->preload()
-//                            ->afterStateUpdated(function ($state, $set) {
-//                                if ($state) {
-//                                    $set('department_id', null);
-//                                }
-//                            })
                             ->live()
                             ->searchable(),
                         Select::make('department_id')
@@ -153,7 +147,6 @@ class ProviderResource extends Resource
                                     $set('municipility_id', null);
                                 }
                             })
-                            ->preload()
                             ->required(),
                         Select::make('municipility_id')
                             ->label('Municipio')
